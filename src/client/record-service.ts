@@ -1,5 +1,4 @@
-import { ClientResponseError, RecordService } from "pocketbase";
-import { LRUCache } from "lru-cache";
+import { RecordService } from "pocketbase";
 import { filter } from "./filter.js";
 
 import type Client from "pocketbase";
@@ -35,30 +34,5 @@ export class ExtendedRecordService<C extends Collections> extends RecordService<
       skipTotal: true
     });
     return result?.items[0];
-  }
-
-  private filterBy(field: string, value: string): string {
-    return this.client.filter(`${field} = {:value}`, { value });
-  }
-
-  public async findBy(
-    field: string,
-    value: string
-  ): Promise<CollectionResponses[C] | undefined> {
-    const cache = new LRUCache<string, CollectionResponses[C]>({ max: 100 });
-    if (cache.has(value)) {
-      return cache.get(value);
-    }
-    try {
-      const filter = this.filterBy(field, value);
-      const result = await this.findFirst(filter);
-      cache.set(value, result);
-      return result;
-    } catch (e) {
-      if (e instanceof ClientResponseError && e.status === 404) {
-        return undefined;
-      }
-      throw e;
-    }
   }
 }

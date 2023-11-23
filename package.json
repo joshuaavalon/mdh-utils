@@ -59,8 +59,8 @@
   "dependencies": {
     "@sinclair/typebox": "^0.31.21",
     "image-type": "^5.2.0",
-    "lru-cache": "^10.0.1",
     "luxon": "^3.4.3",
+    "pino": "^8.16.2",
     "pocketbase": "^0.19.0",
     "puppeteer": "^21.5.2",
     "sharp": "^0.32.6"
