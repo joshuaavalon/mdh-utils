@@ -1,0 +1,10 @@
+{
+  "recommendations": [
+    // ESLint support
+    "dbaeumer.vscode-eslint",
+    // Prettier support
+    "esbenp.prettier-vscode",
+    // Regex replace support
+    "bhughes339.replacerules"
+  ]
+}

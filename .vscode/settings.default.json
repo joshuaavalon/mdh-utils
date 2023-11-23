@@ -1,0 +1,18 @@
+{
+  "eslint.experimental.useFlatConfig": true,
+  "replacerules.rules": {
+    "linebreak2br": {
+      "find": "\n",
+      "replace": "<br/>\n"
+    },
+    "wikiqoute": {
+      "find": "\\[\\d+\\]",
+      "replace": ""
+    }
+  },
+  "replacerules.rulesets": {
+    "metadata.desc": {
+      "rules": ["linebreak2br", "wikiqoute"]
+    }
+  }
+}

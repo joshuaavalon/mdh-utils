@@ -1,0 +1,68 @@
+{
+  "name": "@joshuaavalon/mdh-utils",
+  "version": "1.0.0",
+  "description": "Utility for MediaDataHub",
+  "type": "module",
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "prebuild": "rimraf dist",
+    "build": "tsc",
+    "lint": "eslint src"
+  },
+  "keywords": [],
+  "author": "Joshua Avalon",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/joshuaavalon/mdh-utils.git"
+  },
+  "bugs": {
+    "url": "https://github.com/joshuaavalon/mdh-utils/issues"
+  },
+  "homepage": "https://github.com/joshuaavalon/mdh-utils#readme",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./image": {
+      "types": "./dist/image/index.d.ts",
+      "import": "./dist/image/index.js"
+    },
+    "./client": {
+      "types": "./dist/client/index.d.ts",
+      "import": "./dist/client/index.js"
+    },
+    "./kana": {
+      "types": "./dist/kana/index.d.ts",
+      "import": "./dist/kana/index.js"
+    },
+    "./utils": {
+      "types": "./dist/utils.d.ts",
+      "import": "./dist/utils.js"
+    }
+  },
+  "devDependencies": {
+    "@types/luxon": "3.3.5",
+    "@types/node": "20.9.4",
+    "@typescript-eslint/eslint-plugin": "6.12.0",
+    "@typescript-eslint/parser": "6.12.0",
+    "eslint": "8.54.0",
+    "eslint-config-prettier": "9.0.0",
+    "eslint-plugin-prettier": "5.0.1",
+    "globals": "13.23.0",
+    "rimraf": "5.0.5",
+    "typescript": "5.3.2"
+  },
+  "dependencies": {
+    "@sinclair/typebox": "^0.31.21",
+    "image-type": "^5.2.0",
+    "lru-cache": "^10.0.1",
+    "luxon": "^3.4.3",
+    "pocketbase": "^0.19.0",
+    "puppeteer": "^21.5.2",
+    "sharp": "^0.32.6"
+  }
+}
