@@ -2,7 +2,7 @@ import { pino } from "pino";
 import { launch } from "puppeteer";
 import { TypeCompiler } from "@sinclair/typebox/compiler";
 import { InvalidInputError } from "../error.js";
-import { fetchImage } from "../../image/index.js";
+import { fetchImage, processImage } from "../../image/index.js";
 import { createEpisodeInputSchema } from "./type/index.js";
 
 import type { PuppeteerLaunchOptions } from "puppeteer";
@@ -52,7 +52,7 @@ export async function createEpisode(
       if (page.url() !== url) {
         page.close();
         page = await browser.newPage();
-        await page.goto(url, { waitUntil: "networkidle2" });
+        await page.goto(url);
       }
       await input.onPageLoad(ctx, page);
       index++;
@@ -63,8 +63,8 @@ export async function createEpisode(
       const imageUrls = await input.getImageUrls(ctx, page);
       const posters = await Promise.all(
         imageUrls.map((url, i) =>
-          fetchImage(url, opts?.image).then(result => {
-            const { data, type } = result;
+          fetchImage(url, opts?.image).then(async result => {
+            const { data, type } = await processImage(result);
             return [new Blob([data]), `${i}.${type.ext}`] as [Blob, string];
           })
         )

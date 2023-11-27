@@ -1,3 +1,4 @@
+import { pino } from "pino";
 import { Type } from "@sinclair/typebox";
 import { TypeCompiler } from "@sinclair/typebox/compiler";
 import { RoleJellyfinOptions } from "../../client/index.js";
@@ -27,7 +28,10 @@ const schema = Type.Object({
 });
 
 export type UpdateStaffInput = Static<typeof schema>;
+
+const logger = pino();
 const validator = TypeCompiler.Compile(schema);
+
 export async function updateStaff(
   client: MediaDataHub,
   input: UpdateStaffInput
@@ -51,6 +55,7 @@ export async function updateStaff(
     priorities[role.jellyfin] ??= 0;
     const priority = priorities[role.jellyfin];
     if (tvSeries) {
+      logger.info({ person }, "Create TvSeriesStaff");
       await createTvSeriesStaff(client, {
         tvSeries,
         person: person.id,
@@ -59,6 +64,7 @@ export async function updateStaff(
       });
     }
     if (tvSeason) {
+      logger.info({ person }, "Create TvSeasonStaff");
       await createTvSeasonStaff(client, {
         tvSeason,
         person: person.id,
@@ -67,6 +73,7 @@ export async function updateStaff(
       });
     }
     if (movie) {
+      logger.info({ person }, "Create MovieStaff");
       await createMovieStaff(client, {
         movie,
         person: person.id,
