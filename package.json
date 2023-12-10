@@ -39,9 +39,9 @@
       "types": "./dist/kana/index.d.ts",
       "import": "./dist/kana/index.js"
     },
-    "./utils": {
-      "types": "./dist/utils.d.ts",
-      "import": "./dist/utils.js"
+    "./script": {
+      "types": "./dist/script/index.d.ts",
+      "import": "./dist/script/index.js"
     }
   },
   "files": [
