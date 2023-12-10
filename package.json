@@ -44,6 +44,9 @@
       "import": "./dist/utils.js"
     }
   },
+  "files": [
+    "dist"
+  ],
   "devDependencies": {
     "@types/luxon": "3.3.5",
     "@types/node": "20.9.4",
