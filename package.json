@@ -1,6 +1,6 @@
 {
   "name": "@joshuaavalon/mdh-utils",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Utility for MediaDataHub",
   "type": "module",
   "publishConfig": {

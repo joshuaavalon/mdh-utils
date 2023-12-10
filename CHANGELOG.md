@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.0.2](https://github.com/joshuaavalon/mdh-utils/compare/v1.0.1...v1.0.2) (2023-12-10)
+
+
+### Bug Fixes
+
+* fix exports ([252aa9e](https://github.com/joshuaavalon/mdh-utils/commit/252aa9e8d2f499a96b8424ab71e1633c5116fea2))
+* update exports ([8374222](https://github.com/joshuaavalon/mdh-utils/commit/83742226322fdb20fe6e37c5a0fcf657201b43c7))
+
 ## [1.0.1](https://github.com/joshuaavalon/mdh-utils/compare/v1.0.0...v1.0.1) (2023-12-10)
 
 
