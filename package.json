@@ -22,6 +22,7 @@
     "url": "https://github.com/joshuaavalon/mdh-utils/issues"
   },
   "homepage": "https://github.com/joshuaavalon/mdh-utils#readme",
+  "main": "./dist/index.js",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
