@@ -59,7 +59,7 @@ export async function updateStaff(
       await createTvSeriesStaff(client, {
         tvSeries,
         person: person.id,
-        role: role.id,
+        role: role.jellyfin,
         priority
       });
     }
@@ -68,7 +68,7 @@ export async function updateStaff(
       await createTvSeasonStaff(client, {
         tvSeason,
         person: person.id,
-        role: role.id,
+        role: role.jellyfin,
         priority
       });
     }
@@ -77,7 +77,7 @@ export async function updateStaff(
       await createMovieStaff(client, {
         movie,
         person: person.id,
-        role: role.id,
+        role: role.jellyfin,
         priority
       });
     }

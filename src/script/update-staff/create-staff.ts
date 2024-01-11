@@ -18,11 +18,11 @@ export async function createTvSeriesStaff(
 ): Promise<TvSeriesStaffResponse> {
   const { person, role, tvSeries } = record;
   const item = await client.c("tvSeriesStaff")
-    .first`person = ${person} && role = ${role} && tvSeries = ${tvSeries}`;
+    .first`person = ${person} && role.jellyfin = ${role} && tvSeries = ${tvSeries}`;
   if (item) {
     return item;
   }
-  const f = filter`role = ${role} && tvSeries = ${tvSeries}`;
+  const f = filter`role.jellyfin = ${role} && tvSeries = ${tvSeries}`;
   const latestItem = await client
     .c("tvSeriesStaff")
     .findFirst(f, { sort: "-priority" });
@@ -36,11 +36,11 @@ export async function createTvSeasonStaff(
 ): Promise<TvSeasonStaffResponse> {
   const { person, role, tvSeason } = record;
   const item = await client.c("tvSeasonStaff")
-    .first`person = ${person} && role = ${role} && tvSeason = ${tvSeason}`;
+    .first`person = ${person} && role.jellyfin = ${role} && tvSeason = ${tvSeason}`;
   if (item) {
     return item;
   }
-  const f = filter`role = ${role} && tvSeason = ${tvSeason}`;
+  const f = filter`role.jellyfin = ${role} && tvSeason = ${tvSeason}`;
   const latestItem = await client
     .c("tvSeasonStaff")
     .findFirst(f, { sort: "-priority" });
@@ -54,11 +54,11 @@ export async function createMovieStaff(
 ): Promise<MovieStaffResponse> {
   const { person, role, movie } = record;
   const item = await client.c("movieStaff")
-    .first`person = ${person} && role = ${role} && movie = ${movie}`;
+    .first`person = ${person} && role.jellyfin = ${role} && movie = ${movie}`;
   if (item) {
     return item;
   }
-  const f = filter`role = ${role} && movie = ${movie}`;
+  const f = filter`role.jellyfin = ${role} && movie = ${movie}`;
   const latestItem = await client
     .c("movieStaff")
     .findFirst(f, { sort: "-priority" });
