@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.3](https://github.com/joshuaavalon/mdh-utils/compare/v1.0.2...v1.0.3) (2024-01-11)
+
+
+### Bug Fixes
+
+* fix to check with Jellyfin type ([c77cc1c](https://github.com/joshuaavalon/mdh-utils/commit/c77cc1ce002f913a7a205ee5f3323d651aa826c0))
+
 ## [1.0.2](https://github.com/joshuaavalon/mdh-utils/compare/v1.0.1...v1.0.2) (2023-12-10)
 
 
