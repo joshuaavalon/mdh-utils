@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.4](https://github.com/joshuaavalon/mdh-utils/compare/v1.0.3...v1.0.4) (2024-01-11)
+
+
+### Bug Fixes
+
+* fix create ([3ffbd05](https://github.com/joshuaavalon/mdh-utils/commit/3ffbd05b667b70ce94f741a09d690fb3a655bfd0))
+
 ## [1.0.3](https://github.com/joshuaavalon/mdh-utils/compare/v1.0.2...v1.0.3) (2024-01-11)
 
 
