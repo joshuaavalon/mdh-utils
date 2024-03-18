@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.0.5](https://github.com/joshuaavalon/mdh-utils/compare/v1.0.4...v1.0.5) (2024-03-18)
+
+
+### Bug Fixes
+
+* update dependencies ([a1a366a](https://github.com/joshuaavalon/mdh-utils/commit/a1a366a76c4fd390229a52d87409e2539dcf54e2))
+* update release-please-action config ([fd4a206](https://github.com/joshuaavalon/mdh-utils/commit/fd4a20603984467d5387321ef1991c7cebdb7c58))
+
 ## [1.0.4](https://github.com/joshuaavalon/mdh-utils/compare/v1.0.3...v1.0.4) (2024-01-11)
 
 
