@@ -36,12 +36,7 @@ export async function createEpisode(
   if (!language) {
     throw new Error(`Language does not exists (${input.language})`);
   }
-  const browser = await launch(
-    opts?.puppeteer ?? {
-      headless: "new",
-      defaultViewport: { width: 1920, height: 1080 }
-    }
-  );
+  const browser = await launch(opts?.puppeteer ?? { defaultViewport: { width: 1920, height: 1080 } });
   let page = await browser.newPage();
   let index = 0;
   try {
@@ -61,14 +56,10 @@ export async function createEpisode(
       const sortName = await input.getSortTitle(browser, name);
       const airDate = await input.getAirDate(ctx, page);
       const imageUrls = await input.getImageUrls(ctx, page);
-      const posters = await Promise.all(
-        imageUrls.map((url, i) =>
-          fetchImage(url, opts?.image).then(async result => {
-            const { data, type } = await processImage(result);
-            return [new Blob([data]), `${i}.${type.ext}`] as [Blob, string];
-          })
-        )
-      );
+      const posters = await Promise.all(imageUrls.map((url, i) => fetchImage(url, opts?.image).then(async result => {
+        const { data, type } = await processImage(result);
+        return [new Blob([data]), `${i}.${type.ext}`] as [Blob, string];
+      })));
       logger.info({
         url,
         name,

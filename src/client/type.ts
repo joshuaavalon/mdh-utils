@@ -147,18 +147,18 @@ export type PersonRecord = {
 };
 
 export enum RoleJellyfinOptions {
-  "Actor" = "Actor",
-  "Director" = "Director",
-  "Composer" = "Composer",
-  "Writer" = "Writer",
-  "GuestStar" = "GuestStar",
-  "Producer" = "Producer",
-  "Conductor" = "Conductor",
-  "Lyricist" = "Lyricist",
-  "Arranger" = "Arranger",
-  "Engineer" = "Engineer",
-  "Mixer" = "Mixer",
-  "Remixer" = "Remixer"
+  Actor = "Actor",
+  Director = "Director",
+  Composer = "Composer",
+  Writer = "Writer",
+  GuestStar = "GuestStar",
+  Producer = "Producer",
+  Conductor = "Conductor",
+  Lyricist = "Lyricist",
+  Arranger = "Arranger",
+  Engineer = "Engineer",
+  Mixer = "Mixer",
+  Remixer = "Remixer"
 }
 export type RoleRecord = {
   jellyfin?: RoleJellyfinOptions;

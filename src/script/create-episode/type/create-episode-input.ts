@@ -6,10 +6,7 @@ import { browser } from "./browser.js";
 import type { Static } from "@sinclair/typebox";
 import { DateTime } from "luxon";
 
-const dateTime = TypeSystem.Type<DateTime>(
-  "DateTime",
-  (_opts, value) => value instanceof DateTime
-);
+const dateTime = TypeSystem.Type<DateTime>("DateTime", (_opts, value) => value instanceof DateTime);
 
 export const createEpisodeInputSchema = Type.Object({
   episodeStart: Type.Number(),

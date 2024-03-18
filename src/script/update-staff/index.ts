@@ -19,12 +19,14 @@ const schema = Type.Object({
   tvSeries: Type.Optional(Type.Union([Type.Null(), Type.String()])),
   movie: Type.Optional(Type.Union([Type.Null(), Type.String()])),
   country: Type.String(),
-  actors: Type.Array(
-    Type.Union([
-      Type.Tuple([Type.String(), Type.String()]),
-      Type.Tuple([Type.String(), Type.String(), Type.Enum(RoleJellyfinOptions)])
+  actors: Type.Array(Type.Union([
+    Type.Tuple([Type.String(), Type.String()]),
+    Type.Tuple([
+      Type.String(),
+      Type.String(),
+      Type.Enum(RoleJellyfinOptions)
     ])
-  )
+  ]))
 });
 
 export type UpdateStaffInput = Static<typeof schema>;
@@ -46,7 +48,11 @@ export async function updateStaff(
   }
   const { tvSeason, tvSeries, movie, actors } = input;
   const priorities: Record<string, number> = {};
-  for (const [roleName, personName, jellyfin] of actors) {
+  for (const [
+    roleName,
+    personName,
+    jellyfin
+  ] of actors) {
     const person = await createPerson(client, {
       name: personName,
       country: country.id

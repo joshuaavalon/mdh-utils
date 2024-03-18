@@ -10,9 +10,7 @@ export interface ProcessImageResult {
   data: Uint8Array;
 }
 
-export async function processImage(
-  input: FetchImageResult
-): Promise<ProcessImageResult> {
+export async function processImage(input: FetchImageResult): Promise<ProcessImageResult> {
   let { data } = input;
   const { type } = input;
   if (type.mime === "image/webp" || type.mime === "image/jpeg") {
