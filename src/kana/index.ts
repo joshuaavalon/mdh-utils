@@ -1,15 +1,15 @@
-import { retry } from "../utils.js";
+import { retry } from "#utils";
 
 import type { Browser, Page } from "puppeteer";
 
 async function gotoPage(browser: Browser): Promise<Page> {
   const page = await browser.newPage();
+  browser.pages()
   try {
     await page.goto("https://www.jcinfo.net/ja/tools/kana");
     return page;
-  } catch (e) {
+  } finally {
     page.close();
-    throw e;
   }
 }
 

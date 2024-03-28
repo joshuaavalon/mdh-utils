@@ -9,7 +9,8 @@
   "scripts": {
     "prebuild": "rimraf dist",
     "build": "tsc",
-    "lint": "eslint src"
+    "lint": "eslint src",
+    "test": "node a.js"
   },
   "keywords": [],
   "author": "Joshua Avalon",
@@ -22,19 +23,33 @@
     "url": "https://github.com/joshuaavalon/mdh-utils/issues"
   },
   "homepage": "https://github.com/joshuaavalon/mdh-utils#readme",
-  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "imports": {
+    "#client": {
+      "types": "./dist/client/index.d.ts",
+      "import": "./dist/client/index.js"
+    },
+    "#image": {
+      "types": "./dist/image/index.d.ts",
+      "import": "./dist/image/index.js"
+    },
+    "#utils": {
+      "types": "./dist/utils.d.ts",
+      "import": "./dist/utils.js"
+    }
+  },
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js"
     },
-    "./image": {
-      "types": "./dist/image/index.d.ts",
-      "import": "./dist/image/index.js"
-    },
     "./client": {
       "types": "./dist/client/index.d.ts",
       "import": "./dist/client/index.js"
+    },
+    "./image": {
+      "types": "./dist/image/index.d.ts",
+      "import": "./dist/image/index.js"
     },
     "./kana": {
       "types": "./dist/kana/index.d.ts",
@@ -49,7 +64,7 @@
     "dist"
   ],
   "devDependencies": {
-    "@joshuaavalon/eslint-config-typescript": "^7.0.2",
+    "@joshuaavalon/eslint-config-typescript": "^7.1.1",
     "@types/luxon": "^3.4.2",
     "@types/node": "^20.11.28",
     "eslint": "^8.57.0",
