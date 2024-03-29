@@ -19,7 +19,7 @@ export abstract class SpaParser<T extends HTMLElement = HTMLElement> extends Bas
     const selectTitle = this.selectTitle;
     await page.addScriptTag({ content: `${selectTitle}`.replace(" selectTitle(", " function selectTitle(") });
     const value = await page.evaluate(async meta => {
-      const root = await window.selectRoot(document);
+      const root = await window.selectRoot(document, meta);
       return window.selectTitle(root, meta);
     }, meta);
     if (!value) {
@@ -34,7 +34,7 @@ export abstract class SpaParser<T extends HTMLElement = HTMLElement> extends Bas
     const selectDescription = this.selectDescription;
     await page.addScriptTag({ content: `${selectDescription}`.replace(" selectDescription(", " function selectDescription(") });
     const value = await page.evaluate(async meta => {
-      const root = await window.selectRoot(document);
+      const root = await window.selectRoot(document, meta);
       return window.selectDescription(root, meta);
     }, meta);
     if (!value) {
@@ -49,7 +49,7 @@ export abstract class SpaParser<T extends HTMLElement = HTMLElement> extends Bas
     const selectImageUrls = this.selectImageUrls;
     await page.addScriptTag({ content: `${selectImageUrls}`.replace(" selectImageUrls(", " function selectImageUrls(") });
     const value = await page.evaluate(async meta => {
-      const root = await window.selectRoot(document);
+      const root = await window.selectRoot(document, meta);
       return window.selectImageUrls(root, meta);
     }, meta);
     if (!value) {
@@ -61,7 +61,7 @@ export abstract class SpaParser<T extends HTMLElement = HTMLElement> extends Bas
   public abstract getUrl(meta: EpisodeMetadata, ctx: EpisodeContext): Promise<string>;
   public abstract getSortTitle(title: string, page: Page, meta: EpisodeMetadata, ctx: EpisodeContext): Promise<string>;
   public abstract getAirDate(page: Page, meta: EpisodeMetadata, ctx: EpisodeContext): Promise<DateTime>;
-  public abstract selectRoot(document: Document): Promise<T>;
+  public abstract selectRoot(document: Document, meta: EpisodeMetadata): Promise<T>;
   public abstract selectTitle(root: T, meta: EpisodeMetadata): Promise<string>;
   public abstract selectDescription(root: T, meta: EpisodeMetadata): Promise<string>;
   public abstract selectImageUrls(root: T, meta: EpisodeMetadata): Promise<string[]>;
@@ -69,7 +69,7 @@ export abstract class SpaParser<T extends HTMLElement = HTMLElement> extends Bas
 
 declare global {
   interface Window {
-    selectRoot: (document: Document) => Promise<HTMLElement>;
+    selectRoot: (document: Document, meta: EpisodeMetadata) => Promise<HTMLElement>;
     selectTitle: (document: HTMLElement, meta: EpisodeMetadata) => Promise<string>;
     selectDescription: (document: HTMLElement, meta: EpisodeMetadata) => Promise<string>;
     selectImageUrls: (document: HTMLElement, meta: EpisodeMetadata) => Promise<string[]>;
