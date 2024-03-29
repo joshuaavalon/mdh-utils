@@ -2,7 +2,7 @@ import { pino } from "pino";
 import { Collections } from "../client/index.js";
 
 import type { Logger } from "pino";
-import type { MediaDataHub } from "../client/index.js";
+import type { CountryResponse, LanguageResponse, MediaDataHub } from "../client/index.js";
 
 export interface BaseHandlerOptions {
   client: MediaDataHub;
@@ -24,19 +24,19 @@ export class BaseHandler {
     this.logger = logger ?? pino({ level: "info" });
   }
 
-  protected async findCountryIdByName(name: string): Promise<string> {
+  protected async findCountryByName(name: string): Promise<CountryResponse> {
     const country = await this.client.c(Collections.Country).first`name = ${name}`;
     if (!country) {
       throw new Error(`Country does not exists (${name})`);
     }
-    return country.id;
+    return country;
   }
 
-  protected async findLanguageIdByName(name: string): Promise<string> {
+  protected async findLanguageByName(name: string): Promise<LanguageResponse> {
     const lang = await this.client.c(Collections.Language).first`name = ${name}`;
     if (!lang) {
       throw new Error(`Language does not exists (${name})`);
     }
-    return lang.id;
+    return lang;
   }
 }

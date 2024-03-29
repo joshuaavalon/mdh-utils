@@ -1,4 +1,4 @@
-import { Collections } from "../../client/index.js";
+import { Collections } from "#client";
 import { filter } from "../../client/filter.js";
 import { BaseHandler } from "../base-handler.js";
 import { assertInput } from "./input.js";
@@ -11,7 +11,7 @@ import type {
   RoleResponse,
   TvSeasonStaffResponse,
   TvSeriesStaffResponse
-} from "../../client/index.js";
+} from "#client";
 import type { BaseHandlerOptions } from "../base-handler.js";
 import type { UpdateStaffInput } from "./input.js";
 
@@ -33,9 +33,9 @@ export class StaffUpdater extends BaseHandler {
     assertInput(input);
     const { tvSeason, tvSeries, movie, actors, country } = input;
     const priorities: Record<string, number> = {};
-    const countryId = await this.findCountryIdByName(country);
+    const countryRes = await this.findCountryByName(country);
     for (const [roleName, personName, jellyfin] of actors) {
-      const person = await this.createPerson({ name: personName, country: countryId });
+      const person = await this.createPerson({ name: personName, country: countryRes.id });
       const role = await this.createRole({ name: roleName, jellyfin });
       priorities[role.jellyfin] ??= 0;
       const priority = priorities[role.jellyfin];
