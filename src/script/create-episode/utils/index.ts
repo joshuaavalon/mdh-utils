@@ -1,7 +1,7 @@
 import type { EvaluateFunc } from "puppeteer";
-import type { EpisodeCallback, EpisodeMetadata } from "../type/index.js";
+import type { EpisodeMetadata, EpisodeParser } from "../parser/index.js";
 
-export function pageJump(url: string, fn: EvaluateFunc<[EpisodeMetadata]>): EpisodeCallback["getUrl"] {
+export function pageJump(url: string, fn: EvaluateFunc<[EpisodeMetadata]>): EpisodeParser["getUrl"] {
   return async function (meta, ctx) {
     const { browser } = ctx;
     const page = await browser.newPage();
