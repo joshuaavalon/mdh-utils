@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.0.1](https://github.com/joshuaavalon/mdh-utils/compare/v2.0.0...v2.0.1) (2024-03-29)
+
+
+### Bug Fixes
+
+* export parser ([7a8dcfb](https://github.com/joshuaavalon/mdh-utils/commit/7a8dcfbf13670c221b3834c40903d3cc9dacbed5))
+
 ## [2.0.0](https://github.com/joshuaavalon/mdh-utils/compare/v1.0.4...v2.0.0) (2024-03-29)
 
 
