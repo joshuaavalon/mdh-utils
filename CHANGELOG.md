@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.0.2](https://github.com/joshuaavalon/mdh-utils/compare/v2.0.1...v2.0.2) (2024-03-29)
+
+
+### Bug Fixes
+
+* pass EpisodeMetadata to selectRoot ([64e80f4](https://github.com/joshuaavalon/mdh-utils/commit/64e80f43559e08dfc0438bbc16b59716efd56abd))
+
 ## [2.0.1](https://github.com/joshuaavalon/mdh-utils/compare/v2.0.0...v2.0.1) (2024-03-29)
 
 
