@@ -8,6 +8,8 @@ import type { BaseHandlerOptions } from "../base-handler.js";
 import type { CreateEpisodeInput } from "./input.js";
 import type { EpisodeContext, EpisodeMetadata, EpisodeParser } from "./parser/index.js";
 
+export * from "./parser/index.js";
+export * from "./utils/index.js";
 
 export interface EpisodeCreatorOptions extends BaseHandlerOptions {
   puppeteer?: PuppeteerLaunchOptions;
