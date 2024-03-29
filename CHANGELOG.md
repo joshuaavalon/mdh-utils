@@ -1,5 +1,23 @@
 # Changelog
 
+## [2.0.0](https://github.com/joshuaavalon/mdh-utils/compare/v1.0.4...v2.0.0) (2024-03-29)
+
+
+### ⚠ BREAKING CHANGES
+
+* refactor and update api
+
+### Features
+
+* refactor and update api ([50534cb](https://github.com/joshuaavalon/mdh-utils/commit/50534cb3404f7d94ad690c7e2cd51eb67f4e04f7))
+
+
+### Bug Fixes
+
+* fix bugs ([ed3af5c](https://github.com/joshuaavalon/mdh-utils/commit/ed3af5c538d4fef48d247170c8a33b99745cbc30))
+* update dependencies ([a1a366a](https://github.com/joshuaavalon/mdh-utils/commit/a1a366a76c4fd390229a52d87409e2539dcf54e2))
+* update release-please-action config ([fd4a206](https://github.com/joshuaavalon/mdh-utils/commit/fd4a20603984467d5387321ef1991c7cebdb7c58))
+
 ## [1.0.4](https://github.com/joshuaavalon/mdh-utils/compare/v1.0.3...v1.0.4) (2024-01-11)
 
 
