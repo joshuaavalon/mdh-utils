@@ -18,10 +18,7 @@ function mapValue(value: unknown): string {
   return `'${JSON.stringify(value).replace(/'/gu, "\\'")}'`;
 }
 
-export function filter(
-  strings: TemplateStringsArray,
-  ...values: unknown[]
-): string {
+export function filter(strings: TemplateStringsArray, ...values: unknown[]): string {
   let str = strings[0];
   for (let i = 0; i < values.length; i++) {
     str += mapValue(values[i]) + strings[i + 1];

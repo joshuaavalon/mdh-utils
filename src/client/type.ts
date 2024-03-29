@@ -144,6 +144,7 @@ export type PersonRecord = {
   name: string;
   sortName: string;
   tags?: RecordIdString[];
+  thumbnails?: string[];
 };
 
 export enum RoleJellyfinOptions {
@@ -272,42 +273,24 @@ export type UserRecord = {
 };
 
 // Response types include system fields and match responses from the PocketBase API
-export type CollectionResponse<Texpand = unknown> = BaseSystemFields<Texpand> &
-  Required<CollectionRecord>;
-export type CountryResponse<Texpand = unknown> = BaseSystemFields<Texpand> &
-  Required<CountryRecord>;
-export type GenreResponse<Texpand = unknown> = BaseSystemFields<Texpand> &
-  Required<GenreRecord>;
-export type LanguageResponse<Texpand = unknown> = BaseSystemFields<Texpand> &
-  Required<LanguageRecord>;
-export type MovieResponse<Texpand = unknown> = BaseSystemFields<Texpand> &
-  Required<MovieRecord>;
-export type MovieStaffResponse<Texpand = unknown> = BaseSystemFields<Texpand> &
-  Required<MovieStaffRecord>;
-export type MusicAlbumResponse<Texpand = unknown> = BaseSystemFields<Texpand> &
-  Required<MusicAlbumRecord>;
-export type PersonResponse<Texpand = unknown> = BaseSystemFields<Texpand> &
-  Required<PersonRecord>;
-export type RoleResponse<Texpand = unknown> = BaseSystemFields<Texpand> &
-  Required<RoleRecord>;
-export type StudioResponse<Texpand = unknown> = BaseSystemFields<Texpand> &
-  Required<StudioRecord>;
-export type TagResponse<Texpand = unknown> = BaseSystemFields<Texpand> &
-  Required<TagRecord>;
-export type TvEpisodeResponse<Texpand = unknown> = BaseSystemFields<Texpand> &
-  Required<TvEpisodeRecord>;
-export type TvEpisodeStaffResponse<Texpand = unknown> =
-  BaseSystemFields<Texpand> & Required<TvEpisodeStaffRecord>;
-export type TvSeasonResponse<Texpand = unknown> = BaseSystemFields<Texpand> &
-  Required<TvSeasonRecord>;
-export type TvSeasonStaffResponse<Texpand = unknown> =
-  BaseSystemFields<Texpand> & Required<TvSeasonStaffRecord>;
-export type TvSeriesResponse<Texpand = unknown> = BaseSystemFields<Texpand> &
-  Required<TvSeriesRecord>;
-export type TvSeriesStaffResponse<Texpand = unknown> =
-  BaseSystemFields<Texpand> & Required<TvSeriesStaffRecord>;
-export type UserResponse<Texpand = unknown> = AuthSystemFields<Texpand> &
-  Required<UserRecord>;
+export type CollectionResponse<Texpand = unknown> = BaseSystemFields<Texpand> & Required<CollectionRecord>;
+export type CountryResponse<Texpand = unknown> = BaseSystemFields<Texpand> & Required<CountryRecord>;
+export type GenreResponse<Texpand = unknown> = BaseSystemFields<Texpand> & Required<GenreRecord>;
+export type LanguageResponse<Texpand = unknown> = BaseSystemFields<Texpand> & Required<LanguageRecord>;
+export type MovieResponse<Texpand = unknown> = BaseSystemFields<Texpand> & Required<MovieRecord>;
+export type MovieStaffResponse<Texpand = unknown> = BaseSystemFields<Texpand> & Required<MovieStaffRecord>;
+export type MusicAlbumResponse<Texpand = unknown> = BaseSystemFields<Texpand> & Required<MusicAlbumRecord>;
+export type PersonResponse<Texpand = unknown> = BaseSystemFields<Texpand> & Required<PersonRecord>;
+export type RoleResponse<Texpand = unknown> = BaseSystemFields<Texpand> & Required<RoleRecord>;
+export type StudioResponse<Texpand = unknown> = BaseSystemFields<Texpand> & Required<StudioRecord>;
+export type TagResponse<Texpand = unknown> = BaseSystemFields<Texpand> & Required<TagRecord>;
+export type TvEpisodeResponse<Texpand = unknown> = BaseSystemFields<Texpand> & Required<TvEpisodeRecord>;
+export type TvEpisodeStaffResponse<Texpand = unknown> = BaseSystemFields<Texpand> & Required<TvEpisodeStaffRecord>;
+export type TvSeasonResponse<Texpand = unknown> = BaseSystemFields<Texpand> & Required<TvSeasonRecord>;
+export type TvSeasonStaffResponse<Texpand = unknown> = BaseSystemFields<Texpand> & Required<TvSeasonStaffRecord>;
+export type TvSeriesResponse<Texpand = unknown> = BaseSystemFields<Texpand> & Required<TvSeriesRecord>;
+export type TvSeriesStaffResponse<Texpand = unknown> = BaseSystemFields<Texpand> & Required<TvSeriesStaffRecord>;
+export type UserResponse<Texpand = unknown> = AuthSystemFields<Texpand> & Required<UserRecord>;
 
 // Types containing all Records and Responses, useful for creating typing helper functions
 

@@ -1,92 +1,142 @@
-import { pino } from "pino";
-import { Type } from "@sinclair/typebox";
-import { TypeCompiler } from "@sinclair/typebox/compiler";
-import { RoleJellyfinOptions } from "../../client/index.js";
-import { InvalidInputError } from "../error.js";
-import { createPerson } from "./create-person.js";
-import { createRole } from "./create-role.js";
-import {
-  createMovieStaff,
-  createTvSeasonStaff,
-  createTvSeriesStaff
-} from "./create-staff.js";
+import { Collections } from "#client";
+import { filter } from "../../client/filter.js";
+import { BaseHandler } from "../base-handler.js";
+import { assertInput } from "./input.js";
 
-import type { Static } from "@sinclair/typebox";
-import type { MediaDataHub } from "../../client/index.js";
+import type {
+  MovieStaffResponse,
+  PersonRecord,
+  PersonResponse,
+  RoleRecord,
+  RoleResponse,
+  TvSeasonStaffResponse,
+  TvSeriesStaffResponse
+} from "#client";
+import type { BaseHandlerOptions } from "../base-handler.js";
+import type { UpdateStaffInput } from "./input.js";
 
-const schema = Type.Object({
-  tvSeason: Type.Optional(Type.Union([Type.Null(), Type.String()])),
-  tvSeries: Type.Optional(Type.Union([Type.Null(), Type.String()])),
-  movie: Type.Optional(Type.Union([Type.Null(), Type.String()])),
-  country: Type.String(),
-  actors: Type.Array(Type.Union([
-    Type.Tuple([Type.String(), Type.String()]),
-    Type.Tuple([
-      Type.String(),
-      Type.String(),
-      Type.Enum(RoleJellyfinOptions)
-    ])
-  ]))
-});
 
-export type UpdateStaffInput = Static<typeof schema>;
+export interface StaffUpdaterOptions extends BaseHandlerOptions {
 
-const logger = pino();
-const validator = TypeCompiler.Compile(schema);
+}
 
-export async function updateStaff(
-  client: MediaDataHub,
-  input: UpdateStaffInput
-): Promise<void> {
-  if (!validator.Check(input)) {
-    const errors = [...validator.Errors(input)];
-    throw new InvalidInputError(errors);
+export interface Staff {
+  role: RoleResponse;
+  person: string;
+  priority: number;
+}
+
+export class StaffUpdater extends BaseHandler {
+  public async update(input: UpdateStaffInput): Promise<void> {
+    this.logger.info("Start updating staff");
+    this.logger.debug({ api: this.client.baseUrl, input });
+    assertInput(input);
+    const { tvSeason, tvSeries, movie, actors, country } = input;
+    const priorities: Record<string, number> = {};
+    const countryRes = await this.findCountryByName(country);
+    for (const [roleName, personName, jellyfin] of actors) {
+      const person = await this.createPerson({ name: personName, country: countryRes.id });
+      const role = await this.createRole({ name: roleName, jellyfin });
+      priorities[role.jellyfin] ??= 0;
+      const priority = priorities[role.jellyfin];
+      if (tvSeries) {
+        await this.createTvSeriesStaff({ tvSeries, person: person.id, role, priority });
+      }
+      if (tvSeason) {
+        await this.createTvSeasonStaff({ tvSeason, person: person.id, role, priority });
+      }
+      if (movie) {
+        await this.createMovieStaff({ movie, person: person.id, role, priority });
+      }
+      priorities[role.jellyfin]++;
+    }
   }
-  const country = await client.c("country").first`name = ${input.country}`;
-  if (!country) {
-    throw new Error(`Country does not exists (${input.country})`);
+
+  private async createPerson(record: Pick<PersonRecord, "country" | "name">): Promise<PersonResponse> {
+    const { name, country } = record;
+    const collection = Collections.Person;
+    let item = await this.client.c(collection).first`name = ${name}`;
+    if (item) {
+      this.logger.info({ collection, id: item.id, name }, `Found ${collection} record by name`);
+      this.logger.debug({ item, record });
+      return item;
+    }
+    item = await this.client.c(collection).first`matchName = ${name}`;
+    if (item) {
+      this.logger.info({ collection, id: item.id, name }, `Found ${collection} record by matchName`);
+      this.logger.debug({ item, record });
+      return item;
+    }
+    this.logger.info({ name }, `Cannot find ${collection} record. Create new record`);
+    this.logger.debug({ record });
+    return this.client.c(collection).create({ name, sortName: name, country });
   }
-  const { tvSeason, tvSeries, movie, actors } = input;
-  const priorities: Record<string, number> = {};
-  for (const [
-    roleName,
-    personName,
-    jellyfin
-  ] of actors) {
-    const person = await createPerson(client, {
-      name: personName,
-      country: country.id
-    });
-    const role = await createRole(client, { name: roleName, jellyfin });
-    priorities[role.jellyfin] ??= 0;
-    const priority = priorities[role.jellyfin];
-    if (tvSeries) {
-      logger.info({ person }, "Create TvSeriesStaff");
-      await createTvSeriesStaff(client, {
-        tvSeries,
-        person: person.id,
-        role,
-        priority
-      });
+
+  private async createRole(record: RoleRecord): Promise<RoleResponse> {
+    const { name, jellyfin = "Actor" } = record;
+    const collection = Collections.Role;
+    const item = await this.client.c(collection).first`name = ${name} && jellyfin = ${jellyfin}`;
+    if (item) {
+      this.logger.info({ collection, id: item.id, name }, `Found ${collection} record by name`);
+      this.logger.debug({ item, record });
+      return item;
     }
-    if (tvSeason) {
-      logger.info({ person }, "Create TvSeasonStaff");
-      await createTvSeasonStaff(client, {
-        tvSeason,
-        person: person.id,
-        role,
-        priority
-      });
+    this.logger.info({ name }, `Cannot find ${collection} record. Create new record`);
+    this.logger.debug({ record });
+    return this.client.c(collection).create({ name, jellyfin });
+  }
+
+  private async createTvSeriesStaff(record: Staff & { tvSeries: string }): Promise<TvSeriesStaffResponse> {
+    const { person, role, tvSeries } = record;
+    const collection = Collections.TvSeriesStaff;
+    const item = await this.client.c(collection)
+      .first`person = ${person} && role.jellyfin = ${role.jellyfin} && tvSeries = ${tvSeries}`;
+    if (item) {
+      this.logger.info({ collection, id: item.id }, `Found ${collection} record`);
+      this.logger.debug({ item, record });
+      return item;
     }
-    if (movie) {
-      logger.info({ person }, "Create MovieStaff");
-      await createMovieStaff(client, {
-        movie,
-        person: person.id,
-        role,
-        priority
-      });
+    this.logger.info({ person, jellyfin: role.jellyfin, tvSeries }, `Cannot find ${collection} record. Create new record`);
+    this.logger.debug({ record });
+    const f = filter`role.jellyfin = ${role.jellyfin} && tvSeries = ${tvSeries}`;
+    const latestItem = await this.client.c(collection).findFirst(f, { sort: "-priority" });
+    const priority = (latestItem?.priority ?? -1) + 1;
+    return this.client.c(collection).create({ ...record, role: role.id, priority });
+  }
+
+  private async createTvSeasonStaff(record: Staff & { tvSeason: string }): Promise<TvSeasonStaffResponse> {
+    const { person, role, tvSeason } = record;
+    const collection = Collections.TvSeasonStaff;
+    const item = await this.client.c(collection)
+      .first`person = ${person} && role.jellyfin = ${role.jellyfin} && tvSeason = ${tvSeason}`;
+    if (item) {
+      this.logger.info({ collection, id: item.id }, `Found ${collection} record`);
+      this.logger.debug({ item, record });
+      return item;
     }
-    priorities[role.jellyfin]++;
+    this.logger.info({ person, jellyfin: role.jellyfin, tvSeason }, `Cannot find ${collection} record. Create new record`);
+    this.logger.debug({ record });
+    const f = filter`role.jellyfin = ${role.jellyfin} && tvSeason = ${tvSeason}`;
+    const latestItem = await this.client.c(collection).findFirst(f, { sort: "-priority" });
+    const priority = (latestItem?.priority ?? -1) + 1;
+    return this.client.c(collection).create({ ...record, role: role.id, priority });
+  }
+
+  private async createMovieStaff(record: Staff & { movie: string }): Promise<MovieStaffResponse> {
+    const { person, role, movie } = record;
+    const collection = Collections.MovieStaff;
+    const item = await this.client.c(collection)
+      .first`person = ${person} && role.jellyfin = ${role.jellyfin} && movie = ${movie}`;
+    if (item) {
+      this.logger.info({ collection, id: item.id }, `Found ${collection} record`);
+      this.logger.debug({ item, record });
+      return item;
+    }
+    this.logger.info({ person, jellyfin: role.jellyfin, movie }, `Cannot find ${collection} record. Create new record`);
+    this.logger.debug({ record });
+    const f = filter`role.jellyfin = ${role.jellyfin} && movie = ${movie}`;
+    const latestItem = await this.client.c(collection).findFirst(f, { sort: "-priority" });
+    const priority = (latestItem?.priority ?? -1) + 1;
+    return this.client.c(collection).create({ ...record, role: role.id, priority });
   }
 }

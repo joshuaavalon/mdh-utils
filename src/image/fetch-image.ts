@@ -8,10 +8,7 @@ export interface FetchImageResult {
   data: Uint8Array;
 }
 
-export async function fetchImage(
-  input: Request | URL | string,
-  init?: RequestInit
-): Promise<FetchImageResult> {
+export async function fetchImage(input: Request | URL | string, init?: RequestInit): Promise<FetchImageResult> {
   const res = await fetch(input, init);
   const data = new Uint8Array(await res.arrayBuffer());
   const type = await imageType(data);

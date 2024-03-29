@@ -1,76 +1,72 @@
-import { pino } from "pino";
 import { launch } from "puppeteer";
-import { TypeCompiler } from "@sinclair/typebox/compiler";
-import { InvalidInputError } from "../error.js";
-import { fetchImage, processImage } from "../../image/index.js";
-import { createEpisodeInputSchema } from "./type/index.js";
+import { fetchImage, processImage } from "#image";
+import { BaseHandler } from "../base-handler.js";
+import { assertInput } from "./input.js";
 
 import type { PuppeteerLaunchOptions } from "puppeteer";
-import type { CreateEpisodeInput } from "./type/index.js";
-import type { MediaDataHub } from "../../client/index.js";
+import type { BaseHandlerOptions } from "../base-handler.js";
+import type { CreateEpisodeInput } from "./input.js";
+import type { EpisodeContext, EpisodeMetadata, EpisodeParser } from "./parser/index.js";
 
-export * from "./type/index.js";
 
-const logger = pino();
-const validator = TypeCompiler.Compile(createEpisodeInputSchema);
-
-export interface CreateEpisodeOptions {
+export interface EpisodeCreatorOptions extends BaseHandlerOptions {
   puppeteer?: PuppeteerLaunchOptions;
   image?: RequestInit;
 }
 
-export async function createEpisode(
-  client: MediaDataHub,
-  input: CreateEpisodeInput,
-  opts?: CreateEpisodeOptions
-): Promise<void> {
-  if (!validator.Check(input)) {
-    const errors = [...validator.Errors(input)];
-    throw new InvalidInputError(errors);
+export class EpisodeCreator extends BaseHandler {
+  private readonly puppeteer: PuppeteerLaunchOptions;
+  private readonly image?: RequestInit;
+
+  public constructor(opts: EpisodeCreatorOptions) {
+    const { puppeteer, image, ...others } = opts;
+    super(others);
+    this.puppeteer = puppeteer ?? { defaultViewport: { width: 1920, height: 1080 } };
+    this.image = image;
   }
-  const country = await client.c("country").first`name = ${input.country}`;
-  if (!country) {
-    throw new Error(`Country does not exists (${input.country})`);
-  }
-  const language = await client.c("language").first`name = ${input.language}`;
-  if (!language) {
-    throw new Error(`Language does not exists (${input.language})`);
-  }
-  const browser = await launch(opts?.puppeteer ?? { defaultViewport: { width: 1920, height: 1080 } });
-  let page = await browser.newPage();
-  let index = 0;
-  try {
-    for (let i = input.episodeStart; i <= input.episodeEnd; i++) {
-      const ctx = { browser, index, episode: i };
-      const url = await input.getUrl(ctx, page);
-      logger.info({ url, episode: i }, "Fetching");
-      if (page.url() !== url) {
-        page.close();
-        page = await browser.newPage();
-        await page.goto(url);
+
+  public async create(input: CreateEpisodeInput, parser: EpisodeParser): Promise<void> {
+    this.logger.info("Start create episode");
+    this.logger.debug({ api: this.client.baseUrl, input });
+    assertInput(input);
+    const { epStart, epEnd, tvSeasonId } = input;
+    const country = await this.findCountryByName(input.country);
+    const language = await this.findLanguageByName(input.language);
+    const browser = await launch(this.puppeteer);
+    let index = 0;
+    const ctx: EpisodeContext = { browser, logger: this.logger };
+    try {
+      for (let i = epStart; i <= epEnd; i++) {
+        const meta: EpisodeMetadata = { epStart, epEnd, epCurrent: i, country, language, tvSeasonId, index };
+        await this.createEpisode(parser, ctx, meta);
+        index++;
       }
-      await input.onPageLoad(ctx, page);
-      index++;
-      const name = await input.getTitle(ctx, page);
-      const description = await input.getDescription(ctx, page);
-      const sortName = await input.getSortTitle(browser, name);
-      const airDate = await input.getAirDate(ctx, page);
-      const imageUrls = await input.getImageUrls(ctx, page);
-      const posters = await Promise.all(imageUrls.map((url, i) => fetchImage(url, opts?.image).then(async result => {
+    } finally {
+      await browser.close();
+    }
+  }
+
+  private async createEpisode(parser: EpisodeParser, ctx: EpisodeContext, meta: EpisodeMetadata): Promise<void> {
+    const { browser, logger } = ctx;
+    const { epCurrent, country, language, tvSeasonId } = meta;
+    const page = await browser.newPage();
+    try {
+      this.logger.info({ episode: meta.epCurrent }, "Create episode");
+      const url = await parser.getUrl(meta, ctx);
+      this.logger.debug({ url });
+      await page.goto(url);
+      await parser.onPageLoad(page, meta, ctx);
+      const name = await parser.getTitle(page, meta, ctx);
+      const description = await parser.getDescription(page, meta, ctx);
+      const sortName = await parser.getSortTitle(name, page, meta, ctx);
+      const airDate = await parser.getAirDate(page, meta, ctx);
+      const imageUrls = await parser.getImageUrls(page, meta, ctx);
+      const posters = await Promise.all(imageUrls.map((url, i) => fetchImage(url, this.image).then(async result => {
         const { data, type } = await processImage(result);
         return [new Blob([data]), `${i}.${type.ext}`] as [Blob, string];
       })));
-      logger.info({
-        url,
-        name,
-        sortName,
-        description,
-        airDate: airDate.toISO(),
-        rating: 0,
-        language,
-        country,
-        order: i
-      });
+      logger.info({ url, name, sortName, description, airDate: airDate.toISO(), rating: 0, order: epCurrent });
+
       const data = new FormData();
       data.append("name", name);
       data.append("sortName", sortName);
@@ -79,18 +75,18 @@ export async function createEpisode(
       data.append("rating", "0");
       data.append("language", language.id);
       data.append("country", country.id);
-      data.append("order", `${i}`);
-      data.append("tvSeason", input.tvSeason);
+      data.append("order", `${epCurrent}`);
+      data.append("tvSeason", tvSeasonId);
       for (const [poster, fileName] of posters) {
         data.append("posters", poster, fileName);
       }
-      const record = await client.c("tvEpisode").create(data);
+      const record = await this.client.c("tvEpisode").create(data);
       for (const poster of record.posters) {
-        const url = client.getAdminThumbUrl(record, poster);
+        const url = this.client.getAdminThumbUrl(record, poster);
         await fetch(url);
       }
+    } finally {
+      await page.close();
     }
-  } finally {
-    browser.close();
   }
 }
