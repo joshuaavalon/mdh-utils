@@ -58,9 +58,9 @@ export class EpisodeCreator extends BaseHandler {
       this.logger.debug({ url });
       await page.goto(url);
       await parser.onPageLoad(page, meta, ctx);
-      const name = await parser.getTitle(page, meta, ctx);
-      const description = await parser.getDescription(page, meta, ctx);
-      const sortName = await parser.getSortTitle(name, page, meta, ctx);
+      const name = await parser.getTitle(page, meta, ctx).then(parser.postProcessTitle);
+      const sortName = await parser.getSortTitle(name, page, meta, ctx).then(parser.postProcessSortTitle);
+      const description = await parser.getDescription(page, meta, ctx).then(parser.postProcessDescription);
       const airDate = await parser.getAirDate(page, meta, ctx);
       const imageUrls = await parser.getImageUrls(page, meta, ctx);
       const posters = await Promise.all(imageUrls.map((url, i) => fetchImage(url, this.image).then(async result => {
