@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.0.4](https://github.com/joshuaavalon/mdh-utils/compare/v2.0.3...v2.0.4) (2024-04-07)
+
+
+### Bug Fixes
+
+* close all pages before closing browser ([eca7e3a](https://github.com/joshuaavalon/mdh-utils/commit/eca7e3a82e19e36c4b3aad4f061df1a9e99612d8))
+
 ## [2.0.3](https://github.com/joshuaavalon/mdh-utils/compare/v2.0.2...v2.0.3) (2024-03-30)
 
 
