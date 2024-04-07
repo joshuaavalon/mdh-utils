@@ -44,6 +44,7 @@ export class EpisodeCreator extends BaseHandler {
         index++;
       }
     } finally {
+      await Promise.all(pages.map(page => page.close()));
       await browser.close();
     }
   }
